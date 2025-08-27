@@ -1,73 +1,127 @@
-# Welcome to your Lovable project
+# AIModeAgents Frontend WebSocket Fix
 
-## Project info
+This package contains the fixed frontend implementation for robust WebSocket two-way communication with the AIModeAgents backend.
 
-**URL**: https://lovable.dev/projects/e0b32da4-47bf-41c7-a2f0-9353bfc7ee83
+## Fixed Files
 
-## How can I edit this code?
+### Primary Changes
 
-There are several ways of editing your application.
+1. **ChatInterface2.jsx** - Main chat interface with comprehensive WebSocket handling:
+   - Robust WebSocket connection lifecycle management (onopen/onmessage/onclose/onerror)
+   - Structured message parsing for `agent_message` and `final_answer` types
+   - Separate loading states for HTTP vs WebSocket modes
+   - Automatic WebSocket connection on `interactive_session_start` signal
+   - Enhanced error handling and user feedback
 
-**Use Lovable**
+2. **AgentMessage.jsx** - New component for agent-specific message styling:
+   - Distinct visual styling for different agent roles (supervisor, servicecenteragent, vehicleinfoagent)
+   - Role-specific icons and color schemes
+   - Agent name badges for clear identification
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/e0b32da4-47bf-41c7-a2f0-9353bfc7ee83) and start prompting.
+3. **TypingIndicator.jsx** - WebSocket-specific typing indicator:
+   - Shows when agents are actively typing in interactive sessions
+   - Animated dots for visual feedback
 
-Changes made via Lovable will be committed automatically to this repo.
+### Supporting Components
 
-**Use your preferred IDE**
+4. **ChatView.jsx** - Updated to pass typing state
+5. **MessageList.jsx** - Enhanced with typing indicator support
+6. **Message.jsx** - Updated routing for agent messages
+7. **LoadingIndicator.jsx** - HTTP request loading state
+8. **UserMessage.jsx** - Improved styling with timestamps
+9. **AssistantMessage.jsx** - Enhanced assistant message handling
+10. **SystemMessage.jsx** - System notification styling
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Key Features Implemented
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### WebSocket Communication
+- ✅ Automatic connection on interactive session start
+- ✅ Robust error handling and reconnection logic
+- ✅ Comprehensive logging for debugging
+- ✅ Graceful fallback for unknown message formats
 
-Follow these steps:
+### Message Handling
+- ✅ Structured JSON parsing for `agent_message` and `final_answer`
+- ✅ Agent role identification and styling
+- ✅ Timestamp support for all messages
+- ✅ Fallback to plain text for unknown formats
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### User Experience
+- ✅ Separate loading states (HTTP vs WebSocket)
+- ✅ Non-blocking input in interactive mode
+- ✅ Visual connection status indicators
+- ✅ Toast notifications for connection events
+- ✅ Typing indicators for active conversations
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### Error Handling
+- ✅ WebSocket connection error recovery
+- ✅ User-friendly error messages
+- ✅ Console logging for debugging
+- ✅ Graceful degradation on failures
 
-# Step 3: Install the necessary dependencies.
-npm i
+## Installation & Setup
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+```bash
+# Install dependencies
+npm install
+
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Usage
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+The chat interface automatically handles the transition from HTTP to WebSocket mode:
 
-**Use GitHub Codespaces**
+1. User sends initial message via HTTP POST to `/api/ask`
+2. If backend returns `{ type: "interactive_session_start" }`, WebSocket connects automatically
+3. Subsequent messages are sent via WebSocket until session ends
+4. Agent messages are displayed with role-specific styling
+5. Final answers trigger session cleanup
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Backend Integration
 
-## What technologies are used for this project?
+The frontend expects these message formats from the WebSocket:
 
-This project is built with:
+```javascript
+// Agent messages
+{
+  "type": "agent_message",
+  "sender": "Supervisor|ServiceCenterAgent|VehicleInfoAgent",
+  "text": "Agent response text"
+}
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+// Final answers
+{
+  "type": "final_answer", 
+  "text": "Final summary text"
+}
+```
 
-## How can I deploy this project?
+## Console Logging
 
-Simply open [Lovable](https://lovable.dev/projects/e0b32da4-47bf-41c7-a2f0-9353bfc7ee83) and click on Share -> Publish.
+Comprehensive logging is included for debugging:
+- 🚀 Connection attempts
+- ✅ Successful connections  
+- 📨 Message received/sent
+- 🔴 Connection closures
+- ❌ Errors and failures
 
-## Can I connect a custom domain to my Lovable project?
+Check browser console for detailed WebSocket activity.
 
-Yes, you can!
+## Browser Compatibility
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+Tested with modern browsers supporting:
+- WebSocket API
+- ES6+ JavaScript features
+- CSS Grid/Flexbox
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## Changes Summary
+
+- Fixed WebSocket connection lifecycle management
+- Added structured message parsing for agent communications
+- Implemented role-based message styling
+- Enhanced error handling and user feedback
+- Added typing indicators for interactive sessions
+- Improved loading state management
+- Added comprehensive logging for debugging
